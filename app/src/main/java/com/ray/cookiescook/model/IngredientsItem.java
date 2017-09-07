@@ -1,15 +1,15 @@
 package com.ray.cookiescook.model;
 
 public class IngredientsItem{
-	private int quantity;
+	private double quantity;
 	private String measure;
 	private String ingredient;
 
-	public void setQuantity(int quantity){
+	public void setQuantity(double quantity){
 		this.quantity = quantity;
 	}
 
-	public int getQuantity(){
+	public double getQuantity(){
 		return quantity;
 	}
 
