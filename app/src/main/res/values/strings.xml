@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">Cookies Cook</string>
+    <string name="splash_logo">Splash Logo</string>
+    <string name="title_activity_main2">Main2Activity</string>
+    <string name="sample_initial">N</string>
+    <string name="sample_recipe">Nutella</string>
+    <string name="text_baking_app">Baking List</string>
+    <string name="title_activity_recipe">RecipeActivity</string>
+    <string name="sample_number">1</string>
+    <string name="text_ingredients">Ingredients</string>
 </resources>

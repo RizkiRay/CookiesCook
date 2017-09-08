@@ -1,16 +1,14 @@
 package com.ray.cookiescook.database;
 
 import net.simonvt.schematic.annotation.DataType;
-import net.simonvt.schematic.annotation.PrimaryKey;
 import net.simonvt.schematic.annotation.References;
 
 /**
- * Created by Olis on 9/7/2017.
+ * Created by Ray on 9/7/2017.
  */
 
 public interface StepsColumns {
     @DataType(DataType.Type.INTEGER)
-    @PrimaryKey
     String ID = "_id";
     @DataType(DataType.Type.TEXT)
     String SHORT_DESCRIPTION = "shortDescription";

@@ -4,7 +4,7 @@ import net.simonvt.schematic.annotation.DataType;
 import net.simonvt.schematic.annotation.PrimaryKey;
 
 /**
- * Created by Olis on 9/7/2017.
+ * Created by Ray on 9/7/2017.
  */
 
 public interface RecipeColumns {

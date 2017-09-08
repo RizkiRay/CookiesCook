@@ -4,7 +4,7 @@ import net.simonvt.schematic.annotation.Database;
 import net.simonvt.schematic.annotation.Table;
 
 /**
- * Created by Olis on 9/7/2017.
+ * Created by Ray on 9/7/2017.
  */
 
 @Database(version = BakingDatabase.VERSION, packageName = "com.ray.cookiescook.provider")

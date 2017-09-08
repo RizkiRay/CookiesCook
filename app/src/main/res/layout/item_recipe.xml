@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/card_step"
+    android:layout_marginTop="@dimen/vertical_margin"
+    android:layout_marginLeft="@dimen/horizontal_margin"
+    android:layout_marginRight="@dimen/horizontal_margin"
+    android:layout_width="match_parent"
+    android:layout_height="72dp">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true">
+
+        <TextView
+            android:id="@+id/text_number"
+            android:layout_width="64dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:background="@color/colorAccent"
+            android:text="@string/sample_number"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/initial_text_size"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/text_step_description"
+            android:layout_width="match_parent"
+            android:layout_marginRight="@dimen/horizontal_margin"
+            android:gravity="center_vertical"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/horizontal_margin"
+            android:text="@string/sample_recipe"
+            android:textSize="@dimen/text_size_step" />
+
+    </LinearLayout>
+
+</android.support.v7.widget.CardView>

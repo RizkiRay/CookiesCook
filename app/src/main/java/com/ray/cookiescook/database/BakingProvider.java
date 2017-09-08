@@ -9,7 +9,7 @@ import net.simonvt.schematic.annotation.InexactContentUri;
 import net.simonvt.schematic.annotation.TableEndpoint;
 
 /**
- * Created by Olis on 9/7/2017.
+ * Created by Ray on 9/7/2017.
  */
 
 @ContentProvider(authority = BakingProvider.AUTHORITY, database = BakingDatabase.class,
