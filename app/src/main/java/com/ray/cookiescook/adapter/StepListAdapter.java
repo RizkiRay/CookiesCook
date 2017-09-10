@@ -7,7 +7,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ray.cookiescook.R;
 import com.ray.cookiescook.database.StepsColumns;
@@ -25,14 +27,15 @@ import butterknife.ButterKnife;
 public class StepListAdapter extends RecyclerView.Adapter<StepListAdapter.ViewHolder> {
 
 
-    RecipeListAdapter.RecyclerClickListener mClickListener;
+    public interface RecyclerClickListener{
+        void onItemClickListener(int position);
+    }
+
+    StepListAdapter.RecyclerClickListener mClickListener;
     private Cursor mCursor;
     private Context mContext;
 
-    @BindString(R.string.text_ingredients)
-    String strIngredients;
-
-    public StepListAdapter(RecipeListAdapter.RecyclerClickListener listener) {
+    public StepListAdapter(StepListAdapter.RecyclerClickListener listener) {
         mClickListener = listener;
     }
 
@@ -40,7 +43,6 @@ public class StepListAdapter extends RecyclerView.Adapter<StepListAdapter.ViewHo
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         mContext = parent.getContext();
         View v = LayoutInflater.from(mContext).inflate(R.layout.item_recipe, parent, false);
-        ButterKnife.bind(v);
         return new ViewHolder(v);
     }
 
@@ -69,7 +71,7 @@ public class StepListAdapter extends RecyclerView.Adapter<StepListAdapter.ViewHo
         else return mCursor.getCount() + 1;
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         @BindView(R.id.text_number)
         TextView textNumber;
@@ -77,16 +79,18 @@ public class StepListAdapter extends RecyclerView.Adapter<StepListAdapter.ViewHo
         TextView textDescription;
         @BindView(R.id.card_step)
         CardView cardStep;
+        @BindView(R.id.container)
+        LinearLayout container;
 
         public ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    mClickListener.onItemClickedListener(getAdapterPosition());
-                }
-            });
+            container.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view) {
+            mClickListener.onItemClickListener(getAdapterPosition());
         }
     }
 }

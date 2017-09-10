@@ -1,5 +1,6 @@
 package com.ray.cookiescook;
 
+import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -18,6 +19,7 @@ import android.widget.Toast;
 import com.ray.cookiescook.adapter.RecipeListAdapter;
 import com.ray.cookiescook.adapter.StepListAdapter;
 import com.ray.cookiescook.database.BakingProvider;
+import com.ray.cookiescook.database.IngredientsColumns;
 import com.ray.cookiescook.database.StepsColumns;
 
 import net.simonvt.schematic.Cursors;
@@ -29,18 +31,34 @@ import butterknife.ButterKnife;
  * Created by Ray on 9/8/2017.
  */
 
-public class StepListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, RecipeListAdapter.RecyclerClickListener {
+public class StepListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, StepListAdapter.RecyclerClickListener {
+
+    FragmentDataPassing mCallback;
+
+    interface FragmentDataPassing {
+        void onDataPass(int recipeId, int position);
+    }
 
     private static final String TAG = "StepListFragment";
     private static final String[] PROJECTION = new String[]{
-        StepsColumns.ID, StepsColumns.DESCRIPTION, StepsColumns.SHORT_DESCRIPTION, StepsColumns.THUMBNAIL_URL,
-        StepsColumns.VIDEO_URL, StepsColumns.RECIPE_ID};
+            StepsColumns.ID, StepsColumns.DESCRIPTION, StepsColumns.SHORT_DESCRIPTION, StepsColumns.THUMBNAIL_URL,
+            StepsColumns.VIDEO_URL, StepsColumns.RECIPE_ID};
 
     @BindView(R.id.recycler_step)
     RecyclerView mRecyclerStep;
 
     private StepListAdapter adapter;
     private int recipeId = 0;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            mCallback = (FragmentDataPassing) context;
+        } catch (ClassCastException e) {
+            Log.e(TAG, "onAttach: " + e.toString());
+        }
+    }
 
     @Nullable
     @Override
@@ -69,10 +87,10 @@ public class StepListFragment extends Fragment implements LoaderManager.LoaderCa
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        if (data!= null){
+        if (data != null) {
             adapter.setCursor(data);
-            Log.i(TAG, "onLoadFinished: " + "ga null" );
-            while (!data.isLast()){
+            Log.i(TAG, "onLoadFinished: " + "ga null");
+            while (!data.isLast()) {
                 data.moveToNext();
                 Log.i(TAG, "onLoadFinished: data step " + Cursors.getString(data, StepsColumns.DESCRIPTION));
             }
@@ -85,12 +103,7 @@ public class StepListFragment extends Fragment implements LoaderManager.LoaderCa
     }
 
     @Override
-    public void onItemClickedListener(int position) {
-        Toast.makeText(getActivity(), "" + position, Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onItemClickedListener(int position, int recipeId) {
-        //nothing
+    public void onItemClickListener(int position) {
+        mCallback.onDataPass(recipeId, position);
     }
 }
