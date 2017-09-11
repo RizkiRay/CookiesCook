@@ -6,7 +6,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
-import com.ray.cookiescook.database.IngredientsColumns;
 import com.ray.cookiescook.database.RecipeColumns;
 import com.ray.cookiescook.database.StepsColumns;
 
@@ -35,12 +34,10 @@ public class RecipeActivity extends AppCompatActivity implements StepListFragmen
     }
 
     @Override
-    public void onDataPass(int recipeId, int position) {
-        Bundle bundle = new Bundle();
-        bundle.putInt(IngredientsColumns.RECIPE_ID, recipeId);
+    public void onDataPass(Bundle bundle, int position) {
         Fragment fragment;
         if (position == 0) fragment = new IngredientsFragment();
-        else fragment = new IngredientsFragment();
+        else fragment = new StepDetailFragment();
         fragment.setArguments(bundle);
         getSupportFragmentManager().beginTransaction().addToBackStack("step").replace(R.id.container, fragment).commit();
     }

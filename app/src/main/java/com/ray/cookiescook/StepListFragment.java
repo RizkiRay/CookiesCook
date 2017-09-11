@@ -14,12 +14,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
-import com.ray.cookiescook.adapter.RecipeListAdapter;
 import com.ray.cookiescook.adapter.StepListAdapter;
 import com.ray.cookiescook.database.BakingProvider;
-import com.ray.cookiescook.database.IngredientsColumns;
 import com.ray.cookiescook.database.StepsColumns;
 
 import net.simonvt.schematic.Cursors;
@@ -36,8 +33,10 @@ public class StepListFragment extends Fragment implements LoaderManager.LoaderCa
     FragmentDataPassing mCallback;
 
     interface FragmentDataPassing {
-        void onDataPass(int recipeId, int position);
+        void onDataPass(Bundle bundle, int position);
     }
+
+    private Cursor mCursor;
 
     private static final String TAG = "StepListFragment";
     private static final String[] PROJECTION = new String[]{
@@ -88,6 +87,7 @@ public class StepListFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         if (data != null) {
+            mCursor = data;
             adapter.setCursor(data);
             Log.i(TAG, "onLoadFinished: " + "ga null");
             while (!data.isLast()) {
@@ -104,6 +104,16 @@ public class StepListFragment extends Fragment implements LoaderManager.LoaderCa
 
     @Override
     public void onItemClickListener(int position) {
-        mCallback.onDataPass(recipeId, position);
+        Bundle bundle = new Bundle();
+        bundle.putInt(StepsColumns.RECIPE_ID, recipeId);
+        if (position !=0 && mCursor != null){
+            mCursor.moveToPosition(position-1);
+            String description = Cursors.getString(mCursor, StepsColumns.DESCRIPTION);
+            String url = Cursors.getString(mCursor, StepsColumns.VIDEO_URL);
+            bundle.putString(StepsColumns.DESCRIPTION, description);
+            bundle.putString(StepsColumns.VIDEO_URL, url);
+
+        }
+        mCallback.onDataPass(bundle, position);
     }
 }

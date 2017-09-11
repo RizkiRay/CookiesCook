@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="1"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical">
+
+    <com.google.android.exoplayer2.ui.SimpleExoPlayerView
+        android:id="@+id/exo_video_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:show_timeout="2000"
+        android:animateLayoutChanges="true"
+        app:fastforward_increment="3000"
+        app:rewind_increment="3000"
+        app:controller_layout_id="@layout/custom_exo_control"
+        android:layout_weight=".5"/>
+    <TextView
+        android:id="@+id/text_step"
+        android:layout_marginTop="@dimen/horizontal_margin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:text="@string/sample_step"/>
+</LinearLayout>
