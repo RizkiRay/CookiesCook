@@ -1,12 +1,15 @@
 package com.ray.cookiescook;
 
+import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.android.exoplayer2.DefaultLoadControl;
@@ -28,7 +31,14 @@ import butterknife.ButterKnife;
  * Created by Olis on 9/11/2017.
  */
 
-public class StepDetailFragment extends Fragment{
+public class StepDetailFragment extends Fragment implements View.OnClickListener {
+    private static final String TAG = "StepDetailFragment";
+
+    public interface NavigationListener {
+        void onNextPressed();
+
+        void onPrevPressed();
+    }
 
     @BindView(R.id.text_step)
     TextView textDescription;
@@ -36,7 +46,15 @@ public class StepDetailFragment extends Fragment{
     @BindView(R.id.exo_video_view)
     SimpleExoPlayerView exoPlayerView;
 
+    @BindView(R.id.button_next)
+    Button btnNext;
+
+    @BindView(R.id.button_prev)
+    Button btnPrev;
+
     private String videoUrl;
+
+    private NavigationListener mNavCallback;
 
     private SimpleExoPlayer mExoPlayer;
     private boolean playWhenReady = true;
@@ -56,18 +74,38 @@ public class StepDetailFragment extends Fragment{
         String description = getArguments().getString(StepsColumns.DESCRIPTION);
         videoUrl = getArguments().getString(StepsColumns.VIDEO_URL);
         textDescription.setText(description);
+
+        if (getArguments().getBoolean("islast")){
+            btnNext.setVisibility(View.GONE);
+        } else btnNext.setVisibility(View.VISIBLE);
+
+        btnNext.setOnClickListener(this);
+        btnPrev.setOnClickListener(this);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            mNavCallback = (NavigationListener) context;
+        } catch (ClassCastException e) {
+            Log.e(TAG, "onAttach: " + e.toString());
+        }
     }
 
     private void initializePlayer() {
-        mExoPlayer = ExoPlayerFactory.newSimpleInstance(getActivity(), new DefaultTrackSelector(), new DefaultLoadControl());
-        exoPlayerView.setPlayer(mExoPlayer);
+        if (videoUrl.isEmpty()) exoPlayerView.setVisibility(View.GONE);
+        else {
+            mExoPlayer = ExoPlayerFactory.newSimpleInstance(getActivity(), new DefaultTrackSelector(), new DefaultLoadControl());
+            exoPlayerView.setPlayer(mExoPlayer);
 
-        mExoPlayer.setPlayWhenReady(playWhenReady);
-        mExoPlayer.seekTo(currentWindow, playBackPosition);
+            mExoPlayer.setPlayWhenReady(playWhenReady);
+            mExoPlayer.seekTo(currentWindow, playBackPosition);
 
-        Uri uri = Uri.parse(videoUrl);
-        MediaSource mediaSource = buildMediaSource(uri);
-        mExoPlayer.prepare(mediaSource, true, false);
+            Uri uri = Uri.parse(videoUrl);
+            MediaSource mediaSource = buildMediaSource(uri);
+            mExoPlayer.prepare(mediaSource, true, false);
+        }
     }
 
     private MediaSource buildMediaSource(Uri uri) {
@@ -116,6 +154,15 @@ public class StepDetailFragment extends Fragment{
             playWhenReady = mExoPlayer.getPlayWhenReady();
             mExoPlayer.release();
             mExoPlayer = null;
+        }
+    }
+
+    @Override
+    public void onClick(View view) {
+        if (view.getId() == R.id.button_next) {
+            mNavCallback.onNextPressed();
+        } else if (view.getId() == R.id.button_prev) {
+            mNavCallback.onPrevPressed();
         }
     }
 }

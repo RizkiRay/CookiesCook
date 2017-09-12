@@ -1,5 +1,6 @@
 package com.ray.cookiescook;
 
+import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -13,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import com.ray.cookiescook.adapter.IngredientListAdapter;
 import com.ray.cookiescook.database.BakingProvider;
@@ -32,10 +34,15 @@ public class IngredientsFragment extends Fragment implements LoaderManager.Loade
             IngredientsColumns.QUANTITY, IngredientsColumns.RECIPE_ID
     };
 
+    @BindView(R.id.button_next)
+    Button btnNext;
+
     private static final String TAG = "IngredientsFragment";
 
     @BindView(R.id.recycler_ingredient)
     RecyclerView mRecyclerIngredient;
+
+    private StepDetailFragment.NavigationListener mNextListener;
 
     IngredientListAdapter adapter;
     private int recipeId;
@@ -49,12 +56,29 @@ public class IngredientsFragment extends Fragment implements LoaderManager.Loade
     }
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            mNextListener = (StepDetailFragment.NavigationListener)context;
+        } catch (ClassCastException e){
+            Log.e(TAG, "onAttach: " + e.toString() );
+        }
+    }
+
+    @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         recipeId = getArguments().getInt(IngredientsColumns.RECIPE_ID,0);
         adapter = new IngredientListAdapter();
         mRecyclerIngredient.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerIngredient.setAdapter(adapter);
+
+        btnNext.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mNextListener.onNextPressed();
+            }
+        });
 
         getActivity().getSupportLoaderManager().initLoader(20, null, this);
     }

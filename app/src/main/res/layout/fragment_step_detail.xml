@@ -1,27 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:weightSum="1"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:weightSum="1">
 
-    <com.google.android.exoplayer2.ui.SimpleExoPlayerView
-        android:id="@+id/exo_video_view"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:show_timeout="2000"
-        android:animateLayoutChanges="true"
-        app:fastforward_increment="3000"
-        app:rewind_increment="3000"
-        app:controller_layout_id="@layout/custom_exo_control"
-        android:layout_weight=".5"/>
-    <TextView
-        android:id="@+id/text_step"
-        android:layout_marginTop="@dimen/horizontal_margin"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:weightSum="1">
+
+        <com.google.android.exoplayer2.ui.SimpleExoPlayerView
+            android:id="@+id/exo_video_view"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight=".5"
+            android:animateLayoutChanges="true"
+            app:controller_layout_id="@layout/custom_exo_control"
+            app:fastforward_increment="3000"
+            app:rewind_increment="3000"
+            app:show_timeout="2000" />
+
+        <TextView
+            android:id="@+id/text_step"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/horizontal_margin"
+            android:padding="8dp"
+            android:text="@string/sample_step" />
+    </LinearLayout>
+    <Button
+        android:id="@+id/button_next"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:text="@string/text_next"
+        android:layout_marginRight="@dimen/horizontal_margin"
+        android:layout_marginBottom="@dimen/horizontal_margin"
+        android:background="@drawable/bg_button_next_prev"
+        android:textColor="@android:color/white"
+        android:textAllCaps="false"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="8dp"
-        android:text="@string/sample_step"/>
-</LinearLayout>
+        android:layout_height="@dimen/button_height" />
+    <Button
+        android:id="@+id/button_prev"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:text="@string/text_previous"
+        android:background="@drawable/bg_button_next_prev"
+        android:textColor="@android:color/white"
+        android:textAllCaps="false"
+        android:layout_marginLeft="@dimen/horizontal_margin"
+        android:layout_marginBottom="@dimen/horizontal_margin"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/button_height" />
+</RelativeLayout>

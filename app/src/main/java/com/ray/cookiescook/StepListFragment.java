@@ -34,6 +34,7 @@ public class StepListFragment extends Fragment implements LoaderManager.LoaderCa
 
     interface FragmentDataPassing {
         void onDataPass(Bundle bundle, int position);
+        void onCursorChanged(Cursor cursor);
     }
 
     private Cursor mCursor;
@@ -87,6 +88,7 @@ public class StepListFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         if (data != null) {
+            mCallback.onCursorChanged(data);
             mCursor = data;
             adapter.setCursor(data);
             Log.i(TAG, "onLoadFinished: " + "ga null");
@@ -106,13 +108,17 @@ public class StepListFragment extends Fragment implements LoaderManager.LoaderCa
     public void onItemClickListener(int position) {
         Bundle bundle = new Bundle();
         bundle.putInt(StepsColumns.RECIPE_ID, recipeId);
+//        bundle.putInt("position", position);
         if (position !=0 && mCursor != null){
             mCursor.moveToPosition(position-1);
             String description = Cursors.getString(mCursor, StepsColumns.DESCRIPTION);
             String url = Cursors.getString(mCursor, StepsColumns.VIDEO_URL);
             bundle.putString(StepsColumns.DESCRIPTION, description);
             bundle.putString(StepsColumns.VIDEO_URL, url);
-
+            bundle.putBoolean("islast", false);
+            if (position == mCursor.getCount()){
+                bundle.putBoolean("islast", true);
+            }
         }
         mCallback.onDataPass(bundle, position);
     }

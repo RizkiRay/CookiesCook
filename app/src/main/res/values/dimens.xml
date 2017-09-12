@@ -5,4 +5,6 @@
     <dimen name="initial_text_size">48dp</dimen>
     <dimen name="text_size_recipe">16sp</dimen>
     <dimen name="text_size_step">16sp</dimen>
+    <dimen name="bg_button_radius">8dp</dimen>
+    <dimen name="button_height">32dp</dimen>
 </resources>
