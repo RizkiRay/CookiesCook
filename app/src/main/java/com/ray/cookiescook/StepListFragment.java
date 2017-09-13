@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -77,6 +78,9 @@ public class StepListFragment extends Fragment implements LoaderManager.LoaderCa
         mRecyclerStep.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerStep.setAdapter(adapter);
 
+        ((AppCompatActivity) getActivity()).getSupportActionBar()
+                .setTitle(getResources().getString(R.string.title_step_list));
+
         getActivity().getSupportLoaderManager().initLoader(30, null, this);
     }
 
@@ -105,9 +109,10 @@ public class StepListFragment extends Fragment implements LoaderManager.LoaderCa
     }
 
     @Override
-    public void onItemClickListener(int position) {
+    public void onItemClickListener(int position, String title) {
         Bundle bundle = new Bundle();
         bundle.putInt(StepsColumns.RECIPE_ID, recipeId);
+        bundle.putString(getResources().getString(R.string.text_title), title);
 //        bundle.putInt("position", position);
         if (position !=0 && mCursor != null){
             mCursor.moveToPosition(position-1);

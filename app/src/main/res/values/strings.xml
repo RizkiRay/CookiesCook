@@ -12,4 +12,6 @@
     <string name="sample_step">2. Melt the butter and bittersweet chocolate together in a microwave or a double boiler. If microwaving, heat for 30 seconds at a time, removing bowl and stirring ingredients in between.</string>
     <string name="text_next">Next</string>
     <string name="text_previous">Previous</string>
+    <string name="text_title">title</string>
+    <string name="title_step_list">Steps</string>
 </resources>

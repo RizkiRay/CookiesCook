@@ -1,16 +1,19 @@
 package com.ray.cookiescook;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlayerFactory;
@@ -23,6 +26,9 @@ import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.ray.cookiescook.database.StepsColumns;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -73,14 +79,36 @@ public class StepDetailFragment extends Fragment implements View.OnClickListener
         ButterKnife.bind(this, view);
         String description = getArguments().getString(StepsColumns.DESCRIPTION);
         videoUrl = getArguments().getString(StepsColumns.VIDEO_URL);
-        textDescription.setText(description);
+        try {
+            textDescription.setText(URLDecoder.decode(description, "UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            Log.e(TAG, "onViewCreated: " + e.toString());
+        }
 
-        if (getArguments().getBoolean("islast")){
+        ((AppCompatActivity) getActivity()).getSupportActionBar()
+                .setTitle(getArguments().getString(getResources().getString(R.string.text_title)));
+
+        if (getArguments().getBoolean("islast")) {
             btnNext.setVisibility(View.GONE);
         } else btnNext.setVisibility(View.VISIBLE);
 
         btnNext.setOnClickListener(this);
         btnPrev.setOnClickListener(this);
+    }
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+
+        if (getActivity().getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
+            exoPlayerView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
+                    | View.SYSTEM_UI_FLAG_FULLSCREEN
+                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+        }
     }
 
     @Override
@@ -129,6 +157,12 @@ public class StepDetailFragment extends Fragment implements View.OnClickListener
         if ((Util.SDK_INT <= 23 || mExoPlayer == null)) {
             initializePlayer();
         }
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        Toast.makeText(getActivity(), "test", Toast.LENGTH_SHORT).show();
     }
 
     @Override

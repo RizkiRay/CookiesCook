@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -29,7 +30,7 @@ import butterknife.ButterKnife;
 
 public class IngredientsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    private final static String PROECTION [] = new String[]{
+    private final static String PROECTION[] = new String[]{
             IngredientsColumns._ID, IngredientsColumns.INGREDIENT, IngredientsColumns.MEASURE,
             IngredientsColumns.QUANTITY, IngredientsColumns.RECIPE_ID
     };
@@ -59,19 +60,23 @@ public class IngredientsFragment extends Fragment implements LoaderManager.Loade
     public void onAttach(Context context) {
         super.onAttach(context);
         try {
-            mNextListener = (StepDetailFragment.NavigationListener)context;
-        } catch (ClassCastException e){
-            Log.e(TAG, "onAttach: " + e.toString() );
+            mNextListener = (StepDetailFragment.NavigationListener) context;
+        } catch (ClassCastException e) {
+            Log.e(TAG, "onAttach: " + e.toString());
         }
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        recipeId = getArguments().getInt(IngredientsColumns.RECIPE_ID,0);
+        recipeId = getArguments().getInt(IngredientsColumns.RECIPE_ID, 0);
         adapter = new IngredientListAdapter();
         mRecyclerIngredient.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerIngredient.setAdapter(adapter);
+
+        ((AppCompatActivity) getActivity()).getSupportActionBar()
+                .setTitle(getArguments()
+                        .getString(getResources().getString(R.string.text_title)));
 
         btnNext.setOnClickListener(new View.OnClickListener() {
             @Override

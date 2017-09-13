@@ -9,14 +9,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.ray.cookiescook.R;
 import com.ray.cookiescook.database.StepsColumns;
 
 import net.simonvt.schematic.Cursors;
 
-import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -28,7 +26,7 @@ public class StepListAdapter extends RecyclerView.Adapter<StepListAdapter.ViewHo
 
 
     public interface RecyclerClickListener{
-        void onItemClickListener(int position);
+        void onItemClickListener(int position, String title);
     }
 
     StepListAdapter.RecyclerClickListener mClickListener;
@@ -90,7 +88,7 @@ public class StepListAdapter extends RecyclerView.Adapter<StepListAdapter.ViewHo
 
         @Override
         public void onClick(View view) {
-            mClickListener.onItemClickListener(getAdapterPosition());
+            mClickListener.onItemClickListener(getAdapterPosition(), textDescription.getText().toString());
         }
     }
 }
