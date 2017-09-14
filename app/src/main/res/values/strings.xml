@@ -14,4 +14,6 @@
     <string name="text_previous">Previous</string>
     <string name="text_title">title</string>
     <string name="title_step_list">Steps</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Add widget</string>
 </resources>

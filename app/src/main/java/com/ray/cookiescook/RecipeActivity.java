@@ -99,7 +99,8 @@ public class RecipeActivity extends AppCompatActivity implements StepListFragmen
         } else bundle.putBoolean("islast", false);
 
         fragment.setArguments(bundle);
-        getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment).addToBackStack("steps").commit();
+        getSupportFragmentManager().popBackStack();
+        getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment).addToBackStack("step").commit();
     }
 
     @Override
@@ -143,7 +144,8 @@ public class RecipeActivity extends AppCompatActivity implements StepListFragmen
         }
 
         fragment.setArguments(bundle);
-        getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment).addToBackStack("steps").commit();
+        getSupportFragmentManager().popBackStack();
+        getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment).addToBackStack("step").commit();
     }
 
     @Override

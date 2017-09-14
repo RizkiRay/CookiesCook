@@ -122,7 +122,10 @@ public class StepDetailFragment extends Fragment implements View.OnClickListener
     }
 
     private void initializePlayer() {
-        if (videoUrl.isEmpty()) exoPlayerView.setVisibility(View.GONE);
+        if (videoUrl.isEmpty()){
+            exoPlayerView.setVisibility(View.GONE);
+            textDescription.setVisibility(View.VISIBLE);
+        }
         else {
             mExoPlayer = ExoPlayerFactory.newSimpleInstance(getActivity(), new DefaultTrackSelector(), new DefaultLoadControl());
             exoPlayerView.setPlayer(mExoPlayer);
