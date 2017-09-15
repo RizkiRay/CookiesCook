@@ -9,8 +9,11 @@ import android.support.v4.content.Loader;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
+import com.ray.cookiescook.R;
 import com.ray.cookiescook.database.BakingProvider;
-import com.ray.cookiescook.database.IngredientsColumns;
+import com.ray.cookiescook.database.RecipeColumns;
+
+import net.simonvt.schematic.Cursors;
 
 /**
  * Created by Olis on 9/14/2017.
@@ -18,9 +21,9 @@ import com.ray.cookiescook.database.IngredientsColumns;
 
 public class FavoriteRecicpeRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory, LoaderManager.LoaderCallbacks<Cursor> {
 
-    private final static String PROECTION[] = new String[]{
-            IngredientsColumns._ID, IngredientsColumns.INGREDIENT, IngredientsColumns.MEASURE,
-            IngredientsColumns.QUANTITY, IngredientsColumns.RECIPE_ID
+
+    public static final String RECIPE_PROJECTION[] = new String[]{
+            RecipeColumns.ID, RecipeColumns.IMAGE, RecipeColumns.NAME, RecipeColumns.SERVINGS
     };
     Context mContext;
     Cursor mCursor;
@@ -55,7 +58,10 @@ public class FavoriteRecicpeRemoteViewsFactory implements RemoteViewsService.Rem
     public RemoteViews getViewAt(int i) {
         if (mCursor == null || mCursor.getCount() == 0) return null;
         mCursor.moveToPosition(i);
-        return null;
+        RemoteViews view = new RemoteViews(mContext.getPackageName(), R.layout.item_recipe_widget);
+        String recipeName = Cursors.getString(mCursor, RecipeColumns.NAME);
+        view.setTextViewText(R.id.text_recipe, recipeName);
+        return view;
     }
 
     @Override
@@ -80,7 +86,7 @@ public class FavoriteRecicpeRemoteViewsFactory implements RemoteViewsService.Rem
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new CursorLoader(mContext, BakingProvider.Ingredients.recipeIngredients(recipeId), PROECTION, null, null, null);
+        return new CursorLoader(mContext, BakingProvider.Recipes.CONTENT_URI, RECIPE_PROJECTION, null, null, null);
     }
 
     @Override
