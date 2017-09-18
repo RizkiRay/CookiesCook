@@ -191,6 +191,8 @@ public class StepDetailFragment extends Fragment implements View.OnClickListener
                 mExoPlayer.setPlayWhenReady(playWhenReady);
                 mExoPlayer.seekTo(currentWindow, playBackPosition);
 
+//                exoPlayerView.setDefaultArtwork();
+
                 Uri uri = Uri.parse(videoUrl);
                 MediaSource mediaSource = buildMediaSource(uri);
                 mExoPlayer.prepare(mediaSource, true, false);

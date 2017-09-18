@@ -8,11 +8,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.ray.cookiescook.R;
 import com.ray.cookiescook.database.StepsColumns;
+import com.squareup.picasso.Picasso;
 
 import net.simonvt.schematic.Cursors;
 
@@ -51,13 +53,18 @@ public class StepListAdapter extends RecyclerView.Adapter<StepListAdapter.ViewHo
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         if (position == 0) {
-            holder.textNumber.setText("i");
+            Picasso.with(mContext).load(R.drawable.step_placeholder).fit().centerCrop().into(holder.imageThumb);
             holder.textDescription.setText("Ingredients");
         } else {
             int newPos = position - 1;
             mCursor.moveToPosition(newPos);
             String strStepDesc = Cursors.getString(mCursor, StepsColumns.SHORT_DESCRIPTION);
-            holder.textNumber.setText(position + "");
+            String thumbUrl = Cursors.getString(mCursor, StepsColumns.THUMBNAIL_URL);
+            if (thumbUrl.isEmpty()){
+                Picasso.with(mContext).load(R.drawable.step_placeholder).fit().centerCrop().into(holder.imageThumb);
+            } else {
+                Picasso.with(mContext).load(thumbUrl).placeholder(R.drawable.step_placeholder).fit().centerCrop().into(holder.imageThumb);
+            }
             holder.textDescription.setText(strStepDesc);
         }
         try {
@@ -84,8 +91,8 @@ public class StepListAdapter extends RecyclerView.Adapter<StepListAdapter.ViewHo
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
-        @BindView(R.id.text_number)
-        TextView textNumber;
+        @BindView(R.id.image_thumb)
+        ImageView imageThumb;
         @BindView(R.id.text_step_description)
         TextView textDescription;
         @BindView(R.id.card_step)
