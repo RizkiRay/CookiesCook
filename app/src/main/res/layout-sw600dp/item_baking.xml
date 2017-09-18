@@ -2,9 +2,9 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/baking_container"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:id="@+id/container"
+    android:layout_width="256dp"
+    android:layout_height="256dp"
     android:background="?attr/selectableItemBackground"
     android:clickable="true"
     android:orientation="horizontal"
@@ -12,30 +12,33 @@
 
     <ImageView
         android:id="@+id/image_display"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
         android:src="@drawable/recipe_placeholder" />
+    <View
+        android:background="@color/transparent125"
+        android:layout_width="256dp"
+        android:layout_height="256dp"/>
 
     <TextView
         android:id="@+id/text_recipe_name"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/horizontal_margin"
-        android:layout_toRightOf="@id/image_display"
+        android:layout_centerInParent="true"
         android:gravity="center_vertical"
-        android:paddingLeft="@dimen/horizontal_margin"
-        android:paddingRight="@dimen/horizontal_margin"
+        android:textColor="@android:color/white"
         android:text="@string/sample_recipe"
-        android:textSize="@dimen/text_size_step" />
+        android:textSize="@dimen/text_size_step_600" />
 
     <TextView
         android:id="@+id/text_servings"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/text_recipe_name"
-        android:layout_centerVertical="true"
-        android:layout_toRightOf="@id/image_display"
-        android:gravity="center_vertical"
+        android:layout_centerHorizontal="true"
+        android:textColor="@android:color/white"
+        android:textStyle="bold"
         android:paddingLeft="@dimen/horizontal_margin"
         android:paddingRight="@dimen/horizontal_margin"
         android:text="@string/sample_servings" />

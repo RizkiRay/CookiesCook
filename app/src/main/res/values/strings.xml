@@ -16,4 +16,8 @@
     <string name="title_step_list">Steps</string>
     <string name="appwidget_text">EXAMPLE</string>
     <string name="add_widget">Add widget</string>
+    <string name="sample_servings">8 Servings</string>
+    <string name="big_screen">Big Screen</string>
+    <string name="text_set_widget">Set To Widget</string>
+    <string name="sample_widget_title">Nutella Pie Ingredients</string>
 </resources>

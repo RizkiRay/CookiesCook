@@ -2,10 +2,14 @@ package com.ray.cookiescook;
 
 import android.content.Context;
 import android.content.res.Configuration;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,7 +29,11 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
+import com.ray.cookiescook.database.BakingProvider;
+import com.ray.cookiescook.database.RecipeColumns;
 import com.ray.cookiescook.database.StepsColumns;
+
+import net.simonvt.schematic.Cursors;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -37,8 +45,46 @@ import butterknife.ButterKnife;
  * Created by Olis on 9/11/2017.
  */
 
-public class StepDetailFragment extends Fragment implements View.OnClickListener {
+public class StepDetailFragment extends Fragment implements View.OnClickListener, LoaderManager.LoaderCallbacks<Cursor> {
     private static final String TAG = "StepDetailFragment";
+    private int mRecipeId = 0;
+    private int mPosition = 0;
+    private boolean mIsTwoPane;
+    private static final String[] PROJECTION = new String[]{
+            StepsColumns.ID, StepsColumns.DESCRIPTION, StepsColumns.SHORT_DESCRIPTION, StepsColumns.THUMBNAIL_URL,
+            StepsColumns.VIDEO_URL, StepsColumns.RECIPE_ID};
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        Log.i(TAG, "onCreateLoader: jalan " + mRecipeId);
+        return new CursorLoader(getActivity(), BakingProvider.Steps.recipeSteps(mRecipeId), PROJECTION, null, null, null);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        data.moveToPosition(mPosition - 1);
+        mStrDescription = Cursors.getString(data, StepsColumns.DESCRIPTION);
+        videoUrl = Cursors.getString(data, StepsColumns.VIDEO_URL);
+        try {
+            ((AppCompatActivity) getActivity()).getSupportActionBar()
+                    .setTitle(Cursors.getString(data, StepsColumns.SHORT_DESCRIPTION));
+            textDescription.setText(URLDecoder.decode(mStrDescription, "UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            Log.e(TAG, "onViewCreated: " + e.toString());
+        } catch (NullPointerException e) {
+            Log.e(TAG, "onLoadFinished: null");
+        }
+
+        if ((Util.SDK_INT <= 23 || mExoPlayer == null)) {
+            initializePlayer();
+        }
+
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        releasePlayer();
+    }
 
     public interface NavigationListener {
         void onNextPressed();
@@ -59,7 +105,7 @@ public class StepDetailFragment extends Fragment implements View.OnClickListener
     Button btnPrev;
 
     private String videoUrl;
-
+    private String mStrDescription;
     private NavigationListener mNavCallback;
 
     private SimpleExoPlayer mExoPlayer;
@@ -77,16 +123,15 @@ public class StepDetailFragment extends Fragment implements View.OnClickListener
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
-        String description = getArguments().getString(StepsColumns.DESCRIPTION);
-        videoUrl = getArguments().getString(StepsColumns.VIDEO_URL);
-        try {
-            textDescription.setText(URLDecoder.decode(description, "UTF-8"));
-        } catch (UnsupportedEncodingException e) {
-            Log.e(TAG, "onViewCreated: " + e.toString());
-        }
 
-        ((AppCompatActivity) getActivity()).getSupportActionBar()
-                .setTitle(getArguments().getString(getResources().getString(R.string.text_title)));
+        mPosition = getArguments().getInt("position");
+        mRecipeId = getArguments().getInt(StepsColumns.RECIPE_ID);
+        mIsTwoPane = getArguments().getBoolean("isTwoPane");
+        Log.i(TAG, "onViewCreated: two " + mIsTwoPane);
+        getActivity().getSupportLoaderManager().initLoader(50, null, this);
+//        String description = getArguments().getString(StepsColumns.DESCRIPTION);
+//        videoUrl = getArguments().getString(StepsColumns.VIDEO_URL);
+
 
         if (getArguments().getBoolean("islast")) {
             btnNext.setVisibility(View.GONE);
@@ -96,11 +141,12 @@ public class StepDetailFragment extends Fragment implements View.OnClickListener
         btnPrev.setOnClickListener(this);
     }
 
+
     @Override
     public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
-
-        if (getActivity().getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+        Log.i(TAG, "onViewStateRestored: tes jalan " + mIsTwoPane);
+        if (getActivity().getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE && !mIsTwoPane) {
             ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
             exoPlayerView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
                     | View.SYSTEM_UI_FLAG_FULLSCREEN
@@ -108,6 +154,16 @@ public class StepDetailFragment extends Fragment implements View.OnClickListener
                     | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
                     | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                     | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+        }
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (savedInstanceState != null) {
+            playBackPosition = savedInstanceState.getLong("playback");
+            currentWindow = savedInstanceState.getInt("current_window");
+            mIsTwoPane = savedInstanceState.getBoolean("isTwoPane");
         }
     }
 
@@ -122,20 +178,23 @@ public class StepDetailFragment extends Fragment implements View.OnClickListener
     }
 
     private void initializePlayer() {
-        if (videoUrl.isEmpty()){
+        if (videoUrl.isEmpty()) {
             exoPlayerView.setVisibility(View.GONE);
             textDescription.setVisibility(View.VISIBLE);
-        }
-        else {
-            mExoPlayer = ExoPlayerFactory.newSimpleInstance(getActivity(), new DefaultTrackSelector(), new DefaultLoadControl());
-            exoPlayerView.setPlayer(mExoPlayer);
+        } else {
+            if (mExoPlayer == null) {
+                mExoPlayer = ExoPlayerFactory.newSimpleInstance(getActivity(), new DefaultTrackSelector(), new DefaultLoadControl());
+                exoPlayerView.setPlayer(mExoPlayer);
 
-            mExoPlayer.setPlayWhenReady(playWhenReady);
-            mExoPlayer.seekTo(currentWindow, playBackPosition);
+                Log.i(TAG, "initializePlayer: playback " + playBackPosition);
 
-            Uri uri = Uri.parse(videoUrl);
-            MediaSource mediaSource = buildMediaSource(uri);
-            mExoPlayer.prepare(mediaSource, true, false);
+                mExoPlayer.setPlayWhenReady(playWhenReady);
+                mExoPlayer.seekTo(currentWindow, playBackPosition);
+
+                Uri uri = Uri.parse(videoUrl);
+                MediaSource mediaSource = buildMediaSource(uri);
+                mExoPlayer.prepare(mediaSource, true, false);
+            }
         }
     }
 
@@ -148,24 +207,19 @@ public class StepDetailFragment extends Fragment implements View.OnClickListener
     @Override
     public void onStart() {
         super.onStart();
-        if (Util.SDK_INT > 23) {
-            initializePlayer();
-        }
+//        if (Util.SDK_INT > 23) {
+//            initializePlayer();
+//        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
 //        hideSystemUi();
-        if ((Util.SDK_INT <= 23 || mExoPlayer == null)) {
-            initializePlayer();
-        }
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        Toast.makeText(getActivity(), "test", Toast.LENGTH_SHORT).show();
+//        if ((Util.SDK_INT <= 23 || mExoPlayer == null)) {
+//            initializePlayer();
+//        }
+        getActivity().getSupportLoaderManager().initLoader(50, null, this);
     }
 
     @Override
@@ -183,6 +237,15 @@ public class StepDetailFragment extends Fragment implements View.OnClickListener
             releasePlayer();
         }
     }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putLong("playback", mExoPlayer.getCurrentPosition());
+        outState.putInt("current_window", mExoPlayer.getCurrentWindowIndex());
+        outState.putBoolean("isTwoPane", mIsTwoPane);
+    }
+
 
     private void releasePlayer() {
         if (mExoPlayer != null) {

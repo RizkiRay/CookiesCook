@@ -1,6 +1,7 @@
 package com.ray.cookiescook;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -10,7 +11,9 @@ import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.ray.cookiescook.database.BakingProvider;
 import com.ray.cookiescook.database.RecipeColumns;
@@ -27,9 +30,12 @@ public class RecipeActivity extends AppCompatActivity implements StepListFragmen
     private static final String TAG = "RecipeActivity";
     @BindView(R.id.toolbar)
     Toolbar toolbar;
-    private int mPosition;
+    private int mPosition = 0;
     private Cursor mCursor;
     private int mRecipeId;
+    private boolean mIsTwoPane;
+    int detailContainerResId;
+    private Intent i;
 
 
     private static final String[] PROJECTION = new String[]{
@@ -43,19 +49,62 @@ public class RecipeActivity extends AppCompatActivity implements StepListFragmen
         setContentView(R.layout.activity_recipe);
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
-        Intent i = getIntent();
+        i = getIntent();
         mRecipeId = i.getIntExtra(RecipeColumns.ID, 0);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
 
+        if (findViewById(R.id.container_master_list) != null) {
+            mIsTwoPane = true;
+            detailContainerResId = R.id.container_detail;
+        } else {
+            mIsTwoPane = false;
+            detailContainerResId = R.id.container;
+        }
         if (savedInstanceState == null) {
+            loadFragment(mIsTwoPane);
+        }
+    }
+
+    private void loadFragment(boolean isTwoPane) {
+        if (isTwoPane) {
+            Bundle stepListBundle = new Bundle();
+            stepListBundle.putInt(StepsColumns.RECIPE_ID, mRecipeId);
+            StepListFragment fragmentStepList = new StepListFragment();
+            fragmentStepList.setArguments(stepListBundle);
+            getSupportFragmentManager().beginTransaction().replace(R.id.container_master_list, fragmentStepList).commit();
+
+            Bundle ingredientsBundle = new Bundle();
+
+            ingredientsBundle.putInt(StepsColumns.RECIPE_ID, mRecipeId);
+            ingredientsBundle.putString(RecipeColumns.NAME, i.getStringExtra(RecipeColumns.NAME));
+//            stepDetailBundle.putString(getResources().getString(R.string.text_title), "tes");
+//
+//            String description = Cursors.getString(mCursor, StepsColumns.DESCRIPTION);
+//            String url = Cursors.getString(mCursor, StepsColumns.VIDEO_URL);
+//            stepDetailBundle.putString(StepsColumns.DESCRIPTION, description);
+//            stepDetailBundle.putString(StepsColumns.VIDEO_URL, url);
+            ingredientsBundle.putInt("position", mPosition);
+            ingredientsBundle.putBoolean("islast", false);
+            IngredientsFragment fragmentIngredient = new IngredientsFragment();
+            fragmentIngredient.setArguments(ingredientsBundle);
+            getSupportFragmentManager().popBackStack();
+            getSupportFragmentManager().beginTransaction().replace(R.id.container_detail, fragmentIngredient).commit();
+        } else {
             Bundle bundle = new Bundle();
             bundle.putInt(StepsColumns.RECIPE_ID, mRecipeId);
+            bundle.putString(RecipeColumns.NAME, i.getStringExtra(RecipeColumns.NAME));
             StepListFragment fragment = new StepListFragment();
             fragment.setArguments(bundle);
             getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment).commit();
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.recipe_menu, menu);
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -64,8 +113,10 @@ public class RecipeActivity extends AppCompatActivity implements StepListFragmen
         Fragment fragment;
         if (position == 0) fragment = new IngredientsFragment();
         else fragment = new StepDetailFragment();
+        bundle.putBoolean("isTwoPane", mIsTwoPane);
         fragment.setArguments(bundle);
-        getSupportFragmentManager().beginTransaction().addToBackStack("step").replace(R.id.container, fragment).commit();
+        getSupportFragmentManager().popBackStack();
+        getSupportFragmentManager().beginTransaction().addToBackStack("step").replace(detailContainerResId, fragment).commit();
     }
 
     @Override
@@ -77,8 +128,13 @@ public class RecipeActivity extends AppCompatActivity implements StepListFragmen
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             onBackPressed();
-            return true;
-        } else return super.onOptionsItemSelected(item);
+        } else if (item.getItemId() == R.id.action_add_widget){
+            SharedPreferences pref = getSharedPreferences("COOKIES", 0);
+            pref.edit().putInt(RecipeColumns.ID, mRecipeId).apply();
+            pref.edit().putString(RecipeColumns.NAME, i.getStringExtra(RecipeColumns.NAME)).apply();
+            FavoriteRecipeWidget.sendRefreshBroadcast(this);
+        }
+        return true;
     }
 
     @Override
@@ -86,13 +142,16 @@ public class RecipeActivity extends AppCompatActivity implements StepListFragmen
         mPosition += 1;
         mCursor.moveToPosition(mPosition - 1);
         Fragment fragment = new StepDetailFragment();
-        String description = Cursors.getString(mCursor, StepsColumns.DESCRIPTION);
-        String url = Cursors.getString(mCursor, StepsColumns.VIDEO_URL);
-        String title = Cursors.getString(mCursor, StepsColumns.SHORT_DESCRIPTION);
+//        String description = Cursors.getString(mCursor, StepsColumns.DESCRIPTION);
+//        String url = Cursors.getString(mCursor, StepsColumns.VIDEO_URL);
+//        String title = Cursors.getString(mCursor, StepsColumns.SHORT_DESCRIPTION);
         Bundle bundle = new Bundle();
-        bundle.putString(StepsColumns.DESCRIPTION, description);
-        bundle.putString(StepsColumns.VIDEO_URL, url);
-        bundle.putString(getResources().getString(R.string.text_title), title);
+//        bundle.putString(StepsColumns.DESCRIPTION, description);
+//        bundle.putString(StepsColumns.VIDEO_URL, url);
+        bundle.putInt("position", mPosition);
+        bundle.putInt(StepsColumns.RECIPE_ID, mRecipeId);
+        bundle.putBoolean("isTwoPane", mIsTwoPane);
+//        bundle.putString(getResources().getString(R.string.text_title), "");
 
         if (mPosition == mCursor.getCount()) {
             bundle.putBoolean("islast", true);
@@ -100,7 +159,7 @@ public class RecipeActivity extends AppCompatActivity implements StepListFragmen
 
         fragment.setArguments(bundle);
         getSupportFragmentManager().popBackStack();
-        getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment).addToBackStack("step").commit();
+        getSupportFragmentManager().beginTransaction().replace(detailContainerResId, fragment).addToBackStack("step").commit();
     }
 
     @Override
@@ -127,25 +186,28 @@ public class RecipeActivity extends AppCompatActivity implements StepListFragmen
 
         Fragment fragment;
         Bundle bundle = new Bundle();
+        bundle.putInt(StepsColumns.RECIPE_ID, mRecipeId);
+        bundle.putBoolean("isTwoPane", mIsTwoPane);
+
 
         if (mPosition == 0) {
             fragment = new IngredientsFragment();
-            bundle.putInt(StepsColumns.RECIPE_ID, mRecipeId);
             bundle.putString(getResources().getString(R.string.text_title), getResources().getString(R.string.text_ingredients));
         } else {
             mCursor.moveToPosition(mPosition - 1);
-            String description = Cursors.getString(mCursor, StepsColumns.DESCRIPTION);
-            String url = Cursors.getString(mCursor, StepsColumns.VIDEO_URL);
-            String title = Cursors.getString(mCursor, StepsColumns.SHORT_DESCRIPTION);
-            bundle.putString(StepsColumns.DESCRIPTION, description);
-            bundle.putString(getResources().getString(R.string.text_title), title);
-            bundle.putString(StepsColumns.VIDEO_URL, url);
+//            String description = Cursors.getString(mCursor, StepsColumns.DESCRIPTION);
+//            String url = Cursors.getString(mCursor, StepsColumns.VIDEO_URL);
+//            String title = Cursors.getString(mCursor, StepsColumns.SHORT_DESCRIPTION);
+//            bundle.putString(StepsColumns.DESCRIPTION, description);
+//            bundle.putString(getResources().getString(R.string.text_title), title);
+//            bundle.putString(StepsColumns.VIDEO_URL, url);
+            bundle.putInt("position", mPosition);
             fragment = new StepDetailFragment();
         }
 
         fragment.setArguments(bundle);
         getSupportFragmentManager().popBackStack();
-        getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment).addToBackStack("step").commit();
+        getSupportFragmentManager().beginTransaction().replace(detailContainerResId, fragment).addToBackStack("step").commit();
     }
 
     @Override

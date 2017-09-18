@@ -1,12 +1,15 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#09C"
+    android:background="@android:color/white"
     android:padding="@dimen/widget_margin">
 
-    <ListView
-        android:id="@+id/list_ingredient_widget"
+    <TextView
+        android:id="@+id/text_recipe"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:textColor="@android:color/black"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/vertical_margin"
+        android:textSize="@dimen/text_size_recipe" />
 
 </RelativeLayout>

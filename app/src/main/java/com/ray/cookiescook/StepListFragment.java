@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 
 import com.ray.cookiescook.adapter.StepListAdapter;
 import com.ray.cookiescook.database.BakingProvider;
+import com.ray.cookiescook.database.RecipeColumns;
 import com.ray.cookiescook.database.StepsColumns;
 
 import net.simonvt.schematic.Cursors;
@@ -79,7 +80,7 @@ public class StepListFragment extends Fragment implements LoaderManager.LoaderCa
         mRecyclerStep.setAdapter(adapter);
 
         ((AppCompatActivity) getActivity()).getSupportActionBar()
-                .setTitle(getResources().getString(R.string.title_step_list));
+                .setTitle(getArguments().getString(RecipeColumns.NAME));
 
         getActivity().getSupportLoaderManager().initLoader(30, null, this);
     }
@@ -109,17 +110,17 @@ public class StepListFragment extends Fragment implements LoaderManager.LoaderCa
     }
 
     @Override
-    public void onItemClickListener(int position, String title) {
+    public void onItemClickListener(int position) {
         Bundle bundle = new Bundle();
         bundle.putInt(StepsColumns.RECIPE_ID, recipeId);
-        bundle.putString(getResources().getString(R.string.text_title), title);
-//        bundle.putInt("position", position);
+        bundle.putString(getResources().getString(R.string.text_title), "");
+        bundle.putInt("position", position);
         if (position !=0 && mCursor != null){
             mCursor.moveToPosition(position-1);
-            String description = Cursors.getString(mCursor, StepsColumns.DESCRIPTION);
-            String url = Cursors.getString(mCursor, StepsColumns.VIDEO_URL);
-            bundle.putString(StepsColumns.DESCRIPTION, description);
-            bundle.putString(StepsColumns.VIDEO_URL, url);
+//            String description = Cursors.getString(mCursor, StepsColumns.DESCRIPTION);
+//            String url = Cursors.getString(mCursor, StepsColumns.VIDEO_URL);
+//            bundle.putString(StepsColumns.DESCRIPTION, description);
+//            bundle.putString(StepsColumns.VIDEO_URL, url);
             bundle.putBoolean("islast", false);
             if (position == mCursor.getCount()){
                 bundle.putBoolean("islast", true);

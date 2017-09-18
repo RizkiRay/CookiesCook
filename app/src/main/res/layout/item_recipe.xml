@@ -28,14 +28,15 @@
             android:textColor="@android:color/white"
             android:textSize="@dimen/initial_text_size"
             android:textStyle="bold" />
-
         <TextView
             android:id="@+id/text_step_description"
+            android:layout_toRightOf="@id/image_display"
             android:layout_width="match_parent"
-            android:layout_marginRight="@dimen/horizontal_margin"
+            android:background="@drawable/card_background"
+            android:paddingRight="@dimen/horizontal_margin"
             android:gravity="center_vertical"
             android:layout_height="match_parent"
-            android:layout_marginLeft="@dimen/horizontal_margin"
+            android:paddingLeft="@dimen/horizontal_margin"
             android:text="@string/sample_recipe"
             android:textSize="@dimen/text_size_step" />
 

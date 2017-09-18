@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:weightSum="1"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+    <RelativeLayout
+        android:id="@+id/container_master_list"
+        android:layout_width="0dp"
+        android:layout_weight=".4"
+        android:layout_height="match_parent"/>
+    <View
+        android:background="@color/colorGrey"
+        android:layout_width="3dp"
+        android:layout_height="match_parent"/>
+    <RelativeLayout
+        android:id="@+id/container_detail"
+        android:layout_width="0dp"
+        android:layout_weight=".6"
+        android:layout_height="match_parent"/>
+</LinearLayout>

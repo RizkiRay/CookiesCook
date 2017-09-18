@@ -22,6 +22,7 @@ public final class BakingProvider {
         String RECIPES = "recipes";
         String INGREDIENTS = "ingredients";
         String STEPS = "steps";
+        String WIDGET_INGREDIENTS = "widget_ingredients";
     }
 
     private static Uri buildUri(String... paths) {

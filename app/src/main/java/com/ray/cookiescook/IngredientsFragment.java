@@ -75,8 +75,7 @@ public class IngredientsFragment extends Fragment implements LoaderManager.Loade
         mRecyclerIngredient.setAdapter(adapter);
 
         ((AppCompatActivity) getActivity()).getSupportActionBar()
-                .setTitle(getArguments()
-                        .getString(getResources().getString(R.string.text_title)));
+                .setTitle("Ingredients");
 
         btnNext.setOnClickListener(new View.OnClickListener() {
             @Override

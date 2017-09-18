@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,8 +26,11 @@ import butterknife.ButterKnife;
 public class StepListAdapter extends RecyclerView.Adapter<StepListAdapter.ViewHolder> {
 
 
+    private int mSelectedPosition = -1;
+    private static final String TAG = "StepListAdapter";
+
     public interface RecyclerClickListener{
-        void onItemClickListener(int position, String title);
+        void onItemClickListener(int position);
     }
 
     StepListAdapter.RecyclerClickListener mClickListener;
@@ -55,6 +59,15 @@ public class StepListAdapter extends RecyclerView.Adapter<StepListAdapter.ViewHo
             String strStepDesc = Cursors.getString(mCursor, StepsColumns.SHORT_DESCRIPTION);
             holder.textNumber.setText(position + "");
             holder.textDescription.setText(strStepDesc);
+        }
+        try {
+            if (position == mSelectedPosition) {
+                holder.cardStep.setSelected(true);
+            } else {
+                holder.cardStep.setSelected(false);
+            }
+        } catch (NullPointerException e){
+            Log.e(TAG, "onBindViewHolder: " + e.toString() );
         }
     }
 
@@ -88,7 +101,10 @@ public class StepListAdapter extends RecyclerView.Adapter<StepListAdapter.ViewHo
 
         @Override
         public void onClick(View view) {
-            mClickListener.onItemClickListener(getAdapterPosition(), textDescription.getText().toString());
+            mSelectedPosition = getAdapterPosition();
+            cardStep.setSelected(true);
+            mClickListener.onItemClickListener(getAdapterPosition());
+            notifyDataSetChanged();
         }
     }
 }
