@@ -2,6 +2,7 @@ package com.ray.cookiescook.adapter;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.os.Debug;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -31,7 +32,7 @@ public class StepListAdapter extends RecyclerView.Adapter<StepListAdapter.ViewHo
     private int mSelectedPosition = -1;
     private static final String TAG = "StepListAdapter";
 
-    public interface RecyclerClickListener{
+    public interface RecyclerClickListener {
         void onItemClickListener(int position);
     }
 
@@ -46,6 +47,7 @@ public class StepListAdapter extends RecyclerView.Adapter<StepListAdapter.ViewHo
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         mContext = parent.getContext();
+        Debug.stopMethodTracing();
         View v = LayoutInflater.from(mContext).inflate(R.layout.item_recipe, parent, false);
         return new ViewHolder(v);
     }
@@ -60,7 +62,7 @@ public class StepListAdapter extends RecyclerView.Adapter<StepListAdapter.ViewHo
             mCursor.moveToPosition(newPos);
             String strStepDesc = Cursors.getString(mCursor, StepsColumns.SHORT_DESCRIPTION);
             String thumbUrl = Cursors.getString(mCursor, StepsColumns.THUMBNAIL_URL);
-            if (thumbUrl.isEmpty()){
+            if (thumbUrl.isEmpty()) {
                 Picasso.with(mContext).load(R.drawable.step_placeholder).fit().centerCrop().into(holder.imageThumb);
             } else {
                 Picasso.with(mContext).load(thumbUrl).placeholder(R.drawable.step_placeholder).fit().centerCrop().into(holder.imageThumb);
@@ -73,8 +75,8 @@ public class StepListAdapter extends RecyclerView.Adapter<StepListAdapter.ViewHo
             } else {
                 holder.cardStep.setSelected(false);
             }
-        } catch (NullPointerException e){
-            Log.e(TAG, "onBindViewHolder: " + e.toString() );
+        } catch (NullPointerException e) {
+            Log.e(TAG, "onBindViewHolder: " + e.toString());
         }
     }
 
@@ -89,7 +91,7 @@ public class StepListAdapter extends RecyclerView.Adapter<StepListAdapter.ViewHo
         else return mCursor.getCount() + 1;
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         @BindView(R.id.image_thumb)
         ImageView imageThumb;

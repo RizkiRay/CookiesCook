@@ -11,8 +11,12 @@ import net.simonvt.schematic.annotation.Table;
 public final class BakingDatabase {
     public static final int VERSION = 2;
 
-    @Table(RecipeColumns.class) public static final String RECIPES = "recipes";
-    @Table(IngredientsColumns.class) public static final String INGREDIENTS = "ingredients";
-    @Table(StepsColumns.class) public static final String STEPS = "steps";
-    @Table(StepsColumns.class) public static final String WIDGET_INGREDIENTS = "widget_ingredients";
+    @Table(RecipeColumns.class)
+    public static final String RECIPES = "recipes";
+    @Table(IngredientsColumns.class)
+    public static final String INGREDIENTS = "ingredients";
+    @Table(StepsColumns.class)
+    public static final String STEPS = "steps";
+    @Table(StepsColumns.class)
+    public static final String WIDGET_INGREDIENTS = "widget_ingredients";
 }

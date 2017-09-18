@@ -5,14 +5,10 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Binder;
-import android.os.Bundle;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
+import android.os.Debug;
 import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
-import android.widget.Toast;
 
 import com.ray.cookiescook.R;
 import com.ray.cookiescook.database.BakingProvider;
@@ -25,27 +21,28 @@ import net.simonvt.schematic.Cursors;
  * Created by Olis on 9/14/2017.
  */
 
-public class FavoriteRecicpeRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory{
+public class FavoriteRecicpeRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 
     private static final String TAG = "FavoriteRecicpeRemoteVi";
-    public static final String[] PROJECTION = new String[]{
+    private static final String[] PROJECTION = new String[]{
             IngredientsColumns._ID, IngredientsColumns.INGREDIENT, IngredientsColumns.MEASURE,
             IngredientsColumns.QUANTITY, IngredientsColumns.RECIPE_ID
     };
     private Intent mIntent;
-    Context mContext;
-    Cursor mCursor;
+    private Context mContext;
+    private Cursor mCursor;
     private int recipeId;
 
-    public FavoriteRecicpeRemoteViewsFactory(Context applicationContext,Intent intent){
+    public FavoriteRecicpeRemoteViewsFactory(Context applicationContext, Intent intent) {
         mContext = applicationContext;
         mIntent = intent;
-        recipeId = intent.getIntExtra(RecipeColumns.ID,0);
+        recipeId = intent.getIntExtra(RecipeColumns.ID, 0);
     }
 
     @Override
     public void onCreate() {
 
+        Debug.stopMethodTracing();
     }
 
     @Override
@@ -53,7 +50,6 @@ public class FavoriteRecicpeRemoteViewsFactory implements RemoteViewsService.Rem
         if (mCursor != null) mCursor.close();
 
         final long identityToken = Binder.clearCallingIdentity();
-        Log.i(TAG, "onDataSetChanged: recipeId " + recipeId);
         Uri uri = BakingProvider.Ingredients.recipeIngredients(recipeId);
         mCursor = mContext.getContentResolver().query(uri, PROJECTION, null, null, null);
         Binder.restoreCallingIdentity(identityToken);
@@ -61,12 +57,12 @@ public class FavoriteRecicpeRemoteViewsFactory implements RemoteViewsService.Rem
 
     @Override
     public void onDestroy() {
-        if (mCursor!=null) mCursor.close();
+        if (mCursor != null) mCursor.close();
     }
 
     @Override
     public int getCount() {
-        return mCursor==null?0:mCursor.getCount();
+        return mCursor == null ? 0 : mCursor.getCount();
     }
 
     @Override
@@ -91,7 +87,7 @@ public class FavoriteRecicpeRemoteViewsFactory implements RemoteViewsService.Rem
 
     @Override
     public long getItemId(int i) {
-        return mCursor.moveToPosition(i)?Cursors.getInt(mCursor, RecipeColumns.ID):i;
+        return mCursor.moveToPosition(i) ? Cursors.getInt(mCursor, RecipeColumns.ID) : i;
     }
 
     @Override

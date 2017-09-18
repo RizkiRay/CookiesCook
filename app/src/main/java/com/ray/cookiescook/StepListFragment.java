@@ -3,6 +3,7 @@ package com.ray.cookiescook;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Debug;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -72,6 +73,7 @@ public class StepListFragment extends Fragment implements LoaderManager.LoaderCa
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
+        Debug.stopMethodTracing();
 
         recipeId = getArguments().getInt(StepsColumns.RECIPE_ID);
 
@@ -96,12 +98,10 @@ public class StepListFragment extends Fragment implements LoaderManager.LoaderCa
             mCallback.onCursorChanged(data);
             mCursor = data;
             adapter.setCursor(data);
-            Log.i(TAG, "onLoadFinished: " + "ga null");
             while (!data.isLast()) {
                 data.moveToNext();
-                Log.i(TAG, "onLoadFinished: data step " + Cursors.getString(data, StepsColumns.DESCRIPTION));
             }
-        } else Log.i(TAG, "onLoadFinished: null");
+        }
     }
 
     @Override
@@ -117,10 +117,6 @@ public class StepListFragment extends Fragment implements LoaderManager.LoaderCa
         bundle.putInt("position", position);
         if (position !=0 && mCursor != null){
             mCursor.moveToPosition(position-1);
-//            String description = Cursors.getString(mCursor, StepsColumns.DESCRIPTION);
-//            String url = Cursors.getString(mCursor, StepsColumns.VIDEO_URL);
-//            bundle.putString(StepsColumns.DESCRIPTION, description);
-//            bundle.putString(StepsColumns.VIDEO_URL, url);
             bundle.putBoolean("islast", false);
             if (position == mCursor.getCount()){
                 bundle.putBoolean("islast", true);

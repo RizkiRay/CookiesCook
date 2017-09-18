@@ -20,4 +20,5 @@
     <string name="big_screen">Big Screen</string>
     <string name="text_set_widget">Set To Widget</string>
     <string name="sample_widget_title">Nutella Pie Ingredients</string>
+    <string name="text_servings">Servings</string>
 </resources>

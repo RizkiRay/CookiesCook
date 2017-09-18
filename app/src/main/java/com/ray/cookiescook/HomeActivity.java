@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Debug;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -54,6 +55,7 @@ public class HomeActivity extends AppCompatActivity implements LoaderManager.Loa
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         ButterKnife.bind(this);
+        Debug.stopMethodTracing();
 
         toolbar.setTitle(activityTitle);
         setSupportActionBar(toolbar);
@@ -82,7 +84,6 @@ public class HomeActivity extends AppCompatActivity implements LoaderManager.Loa
         if (data != null) {
             while (!data.isLast()) {
                 data.moveToNext();
-                Log.i(TAG, "onLoadFinished: data " + Cursors.getString(data, RecipeColumns.NAME));
             }
             adapter.setCursor(data);
         }

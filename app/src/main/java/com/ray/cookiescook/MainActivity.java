@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.sqlite.SQLiteConstraintException;
 import android.os.Bundle;
+import android.os.Debug;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
@@ -33,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Debug.stopMethodTracing();
 
         testInsertContentProvider();
 
@@ -69,7 +71,6 @@ public class MainActivity extends AppCompatActivity {
                         StepsItem step = steps.get(i);
                         ContentValues cvStep = new ContentValues();
                         cvStep.put(StepsColumns.ID, step.getId());
-                        Log.i(TAG, "onResponse: step id " + step.getId());
                         cvStep.put(StepsColumns.DESCRIPTION, step.getDescription());
                         cvStep.put(StepsColumns.SHORT_DESCRIPTION, step.getShortDescription());
                         cvStep.put(StepsColumns.THUMBNAIL_URL, step.getThumbnailURL());
@@ -88,7 +89,6 @@ public class MainActivity extends AppCompatActivity {
                         getContentResolver().bulkInsert(BakingProvider.Ingredients.CONTENT_URI, ingredientValues);
                         getContentResolver().bulkInsert(BakingProvider.Steps.CONTENT_URI, stepValues);
                     } catch (SQLiteConstraintException e){
-                        Log.e(TAG, "onResponse: " + e.toString() );
                     }
                 }
 //                getSupportLoaderManager().initLoader(10, null, MainActivity.this);
@@ -105,27 +105,4 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-//    @Override
-//    public Loader onCreateLoader(int id, Bundle args) {
-//        return new CursorLoader(this, BakingProvider.Ingredients.recipeIngredients(2), INGREDIENTS_PROJECTION, null, null, null);
-//    }
-//
-//    @Override
-//    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-//        if (data != null) {
-//            while (!data.isLast()) {
-//                data.moveToNext();
-//                Log.i(TAG, "onLoadFinished: id " + Cursors.getString(data, IngredientsColumns._ID));
-//                Log.i(TAG, "onLoadFinished: name " + Cursors.getString(data, IngredientsColumns.INGREDIENT));
-//            }
-//        } else {
-//            Log.e(TAG, "onLoadFinished: cursor return null");
-//        }
-//    }
-//
-//
-//    @Override
-//    public void onLoaderReset(Loader loader) {
-//
-//    }
 }

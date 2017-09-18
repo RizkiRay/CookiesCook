@@ -3,6 +3,7 @@ package com.ray.cookiescook;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Debug;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -73,6 +74,7 @@ public class IngredientsFragment extends Fragment implements LoaderManager.Loade
         adapter = new IngredientListAdapter();
         mRecyclerIngredient.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerIngredient.setAdapter(adapter);
+        Debug.stopMethodTracing();
 
         ((AppCompatActivity) getActivity()).getSupportActionBar()
                 .setTitle("Ingredients");
@@ -96,9 +98,7 @@ public class IngredientsFragment extends Fragment implements LoaderManager.Loade
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         if (data != null) {
             adapter.setCursor(data);
-            Log.i(TAG, "onLoadFinished: " + "data tidak kosong");
-        } else
-            Log.i(TAG, "onLoadFinished: " + "data kosong");
+        }
     }
 
     @Override

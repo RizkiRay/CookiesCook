@@ -28,7 +28,6 @@ public final class BakingProvider {
     private static Uri buildUri(String... paths) {
         Uri.Builder builder = BASE_CONTENT_URI.buildUpon();
         for (String path : paths) builder.appendPath(path);
-        Log.i("TES", "buildUri: " + builder.build().toString());
         return builder.build();
     }
 

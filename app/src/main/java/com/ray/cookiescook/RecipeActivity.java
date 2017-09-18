@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Debug;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -51,6 +52,7 @@ public class RecipeActivity extends AppCompatActivity implements StepListFragmen
         setSupportActionBar(toolbar);
         i = getIntent();
         mRecipeId = i.getIntExtra(RecipeColumns.ID, 0);
+        Debug.stopMethodTracing();
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
@@ -79,12 +81,6 @@ public class RecipeActivity extends AppCompatActivity implements StepListFragmen
 
             ingredientsBundle.putInt(StepsColumns.RECIPE_ID, mRecipeId);
             ingredientsBundle.putString(RecipeColumns.NAME, i.getStringExtra(RecipeColumns.NAME));
-//            stepDetailBundle.putString(getResources().getString(R.string.text_title), "tes");
-//
-//            String description = Cursors.getString(mCursor, StepsColumns.DESCRIPTION);
-//            String url = Cursors.getString(mCursor, StepsColumns.VIDEO_URL);
-//            stepDetailBundle.putString(StepsColumns.DESCRIPTION, description);
-//            stepDetailBundle.putString(StepsColumns.VIDEO_URL, url);
             ingredientsBundle.putInt("position", mPosition);
             ingredientsBundle.putBoolean("islast", false);
             IngredientsFragment fragmentIngredient = new IngredientsFragment();
@@ -142,16 +138,10 @@ public class RecipeActivity extends AppCompatActivity implements StepListFragmen
         mPosition += 1;
         mCursor.moveToPosition(mPosition - 1);
         Fragment fragment = new StepDetailFragment();
-//        String description = Cursors.getString(mCursor, StepsColumns.DESCRIPTION);
-//        String url = Cursors.getString(mCursor, StepsColumns.VIDEO_URL);
-//        String title = Cursors.getString(mCursor, StepsColumns.SHORT_DESCRIPTION);
         Bundle bundle = new Bundle();
-//        bundle.putString(StepsColumns.DESCRIPTION, description);
-//        bundle.putString(StepsColumns.VIDEO_URL, url);
         bundle.putInt("position", mPosition);
         bundle.putInt(StepsColumns.RECIPE_ID, mRecipeId);
         bundle.putBoolean("isTwoPane", mIsTwoPane);
-//        bundle.putString(getResources().getString(R.string.text_title), "");
 
         if (mPosition == mCursor.getCount()) {
             bundle.putBoolean("islast", true);
@@ -195,12 +185,6 @@ public class RecipeActivity extends AppCompatActivity implements StepListFragmen
             bundle.putString(getResources().getString(R.string.text_title), getResources().getString(R.string.text_ingredients));
         } else {
             mCursor.moveToPosition(mPosition - 1);
-//            String description = Cursors.getString(mCursor, StepsColumns.DESCRIPTION);
-//            String url = Cursors.getString(mCursor, StepsColumns.VIDEO_URL);
-//            String title = Cursors.getString(mCursor, StepsColumns.SHORT_DESCRIPTION);
-//            bundle.putString(StepsColumns.DESCRIPTION, description);
-//            bundle.putString(getResources().getString(R.string.text_title), title);
-//            bundle.putString(StepsColumns.VIDEO_URL, url);
             bundle.putInt("position", mPosition);
             fragment = new StepDetailFragment();
         }
@@ -219,8 +203,7 @@ public class RecipeActivity extends AppCompatActivity implements StepListFragmen
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         if (data != null) {
             mCursor = data;
-            Log.i(TAG, "onLoadFinished: " + "ga null");
-        } else Log.i(TAG, "onLoadFinished: null");
+        }
     }
 
     @Override

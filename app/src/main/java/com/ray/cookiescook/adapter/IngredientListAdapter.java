@@ -2,6 +2,7 @@ package com.ray.cookiescook.adapter;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.os.Debug;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,7 +21,7 @@ import butterknife.ButterKnife;
  * Created by ray on 08/09/2017.
  */
 
-public class IngredientListAdapter extends RecyclerView.Adapter<IngredientListAdapter.ViewHolder>{
+public class IngredientListAdapter extends RecyclerView.Adapter<IngredientListAdapter.ViewHolder> {
 
     private Cursor mCursor;
     private Context mContext;
@@ -28,6 +29,7 @@ public class IngredientListAdapter extends RecyclerView.Adapter<IngredientListAd
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         mContext = parent.getContext();
+        Debug.stopMethodTracing();
         View v = LayoutInflater.from(mContext).inflate(R.layout.item_ingredient, parent, false);
         return new ViewHolder(v);
     }
@@ -39,12 +41,12 @@ public class IngredientListAdapter extends RecyclerView.Adapter<IngredientListAd
         String strMeasure = Cursors.getString(mCursor, IngredientsColumns.MEASURE);
         String strIngredient = Cursors.getString(mCursor, IngredientsColumns.INGREDIENT);
 
-        holder.textNumber.setText(position+1 + "");
+        holder.textNumber.setText(position + 1 + "");
         holder.textIngredient.setText(strIngredient);
         holder.textMeasure.setText(strQuantity + " " + strMeasure);
     }
 
-    public void setCursor(Cursor cursor){
+    public void setCursor(Cursor cursor) {
         mCursor = cursor;
         notifyDataSetChanged();
     }
@@ -55,13 +57,14 @@ public class IngredientListAdapter extends RecyclerView.Adapter<IngredientListAd
         else return mCursor.getCount();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public class ViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.text_number)
         TextView textNumber;
         @BindView(R.id.text_measure)
         TextView textMeasure;
         @BindView(R.id.text_ingredient)
         TextView textIngredient;
+
         public ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
